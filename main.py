@@ -2,6 +2,7 @@
 '''
 A small program for playing back audio file playlists based on the the rfid tag the program recieves
 over the computer's serial port. Makes use of the pyserial library - http://pyserial.sourceforge.net/
+Author: Sulaiman Allen
 '''
 import serial
 import subprocess
@@ -200,5 +201,3 @@ if __name__ == '__main__':
 
 #if the track is the first track, allow the back button to start the track over or
 #have the track loop back to the last track
-
-#add project to github
