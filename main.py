@@ -4,6 +4,7 @@ A small program for playing back audio file playlists based on the the rfid tag 
 over the computer's serial port. Makes use of the pyserial library - http://pyserial.sourceforge.net/
 Author: Sulaiman Allen
 '''
+#from serial import Serial
 import serial
 import subprocess
 import csv
@@ -14,7 +15,7 @@ oldRfid = ''
 # Audio Player
 PLAYER = 'ncmpcpp'  # ncmpcpp will provide the visuals for this project
 CONTROLLER = 'mpc'  # mpc has the option of loading a playlist from the command line
-
+ser = None
 
 def init():
 
@@ -22,11 +23,14 @@ def init():
 
     try:
         # serial setup
-        ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
-    except:
+        #ser = Serial('/dev/ttyUSB0', 9600, timeout=1)
+	global ser
+	ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+    except serial.serialutil.SerialException:
         print '[+] Serial Port Not Found. Try unplugging USB cable and plugging it back in.'
-        # database setup
+	exit()
 
+    # database setup
     try:
         with open('albums.csv', 'r') as f:
             # copy the database file to a dictionary
