@@ -4,8 +4,8 @@ A small program for playing back audio file playlists based on the the rfid tag 
 over the computer's serial port. Makes use of the pyserial library - http://pyserial.sourceforge.net/
 Author: Sulaiman Allen
 '''
-#from serial import Serial
-import serial
+from serial import *
+#import serial
 import subprocess
 import csv
 
@@ -17,18 +17,27 @@ PLAYER = 'ncmpcpp'  # ncmpcpp will provide the visuals for this project
 CONTROLLER = 'mpc'  # mpc has the option of loading a playlist from the command line
 
 # Serial Init
-try:
-    ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
-except serial.serialutil.SerialException:
-    print '[+] Serial Port Not Found. Try unplugging USB cable and plugging it back in.'
-    exit()
+ser = None
 
+# Catalog
+catalog = dict()
 
 def init():
+    '''
+    Inital setup function for loading database from file and initalizing serial port
+    '''
+    # Serial init
+    global ser
 
-    catalog = dict
+    try:
+        ser = Serial('/dev/ttyUSB0', 9600, timeout=1)
+    except serialutil.SerialException:
+        print '[+] Serial Port Not Found. Try unplugging USB cable and plugging it back in.'
+        exit()
 
-    # database setup
+    # Database load
+    global catalog
+
     try:
         with open('albums.csv', 'r') as f:
             # copy the database file to a dictionary
@@ -43,7 +52,8 @@ def init():
     finally:
         # close the database file
         f.close()
-        main(catalog)
+        #main(catalog)
+        main()
 
 
 def catalogPrint(catalog):
@@ -66,7 +76,7 @@ def catalogPrint(catalog):
     print 'rfid == ' + str(rfid) + '.'
 
 
-def main(catalog):
+def main():
     '''
     Main function. Searches the rfid tag's id against an entry in a database file.
 
@@ -74,7 +84,7 @@ def main(catalog):
     all the albums available <values> and their corresponding rfid tag ids <keys>.
     '''
 
-    print '[+] Waiting for tag...'
+    print '[+] Waiting for tag...\n'
     rfid = ser.read(10)
     # clean up the extra garbage at the end of the serial data, (Newline character, etc)
     rfid = rfid.strip()
@@ -90,7 +100,7 @@ def main(catalog):
             # launch the album loader function
             return loadandplay(rfid, catalog[tagID])
 
-    return main(catalog)
+    return main()
 
 
 def loadandplay(rfid, album):
@@ -203,7 +213,7 @@ def actions(rfid, rfidLocal):
         subprocess.call([CONTROLLER, '-q', 'clear'])
         subprocess.call([CONTROLLER, '-q', 'volume', '100'])
         oldRfid = rfidLocal
-        return main(catalog)
+        return main()
 
     # if its not a control code, hopefully it will be a database code
     else:
