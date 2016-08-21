@@ -15,20 +15,18 @@ oldRfid = ''
 # Audio Player
 PLAYER = 'ncmpcpp'  # ncmpcpp will provide the visuals for this project
 CONTROLLER = 'mpc'  # mpc has the option of loading a playlist from the command line
-ser = None
+
+# Serial Init
+try:
+    ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+except serial.serialutil.SerialException:
+    print '[+] Serial Port Not Found. Try unplugging USB cable and plugging it back in.'
+    exit()
+
 
 def init():
 
     catalog = dict
-
-    try:
-        # serial setup
-        #ser = Serial('/dev/ttyUSB0', 9600, timeout=1)
-	global ser
-	ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
-    except serial.serialutil.SerialException:
-        print '[+] Serial Port Not Found. Try unplugging USB cable and plugging it back in.'
-	exit()
 
     # database setup
     try:
@@ -40,6 +38,7 @@ def init():
         # print 'Serial port does not exist. Try unplugging the device and plugging it back in.'
         # sys.exit(0)
         print '[+] Album file not found.'
+        exit()
 
     finally:
         # close the database file
@@ -75,6 +74,7 @@ def main(catalog):
     all the albums available <values> and their corresponding rfid tag ids <keys>.
     '''
 
+    print '[+] Waiting for tag...'
     rfid = ser.read(10)
     # clean up the extra garbage at the end of the serial data, (Newline character, etc)
     rfid = rfid.strip()
