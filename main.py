@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 '''
 A small program for playing back audio file playlists based on the the rfid tag the program recieves
 over the computer's serial port. Makes use of the pyserial library - http://pyserial.sourceforge.net/
@@ -68,7 +68,7 @@ try:
         while len(line) != 10:
             line = ser.read(10)
             # clean up the extra garbage at the end of the serial data, (Newline character, etc)
-            rfid = line.strip()
+            rfid = line.strip().decode('utf-8')
         print 'rfid == ' + str(rfid) + '.'
 
     def main():
@@ -82,20 +82,19 @@ try:
         print '[+] Waiting for tag...\n'
         rfid = ser.read(10)
         # clean up the extra garbage at the end of the serial data, (Newline character, etc)
-        rfid = rfid.strip()
+        rfid = rfid.strip().decode('utf-8')
 
         # if the tag doesnt do a complete read the first time around, this needs to be done.
         while len(rfid) != 8:
             rfid = ser.read(10)
-            rfid = rfid.strip()
+            rfid = rfid.strip().decode('utf-8')
 
-        for tagID in catalog:
-            # if an album is found...
-            if rfid == tagID:
-                # launch the album loader function
-                return loadandplay(rfid, catalog[tagID])
+        try:
+            catalog[rfid]
+            return loadandplay(rfid, catalog[rfid])
 
-        return main()
+        except KeyError:
+            return main()
 
     def loadandplay(rfid, album):
         '''
@@ -118,11 +117,11 @@ try:
         '''
 
         line = ser.read(10)
-        rfidLocal = line.strip()
+        rfidLocal = line.strip().decode('utf-8')
 
         while rfid == rfidLocal:
             line = ser.read(10)
-            rfidLocal = line.strip()
+            rfidLocal = line.strip().decode('utf-8')
 
         return actions(rfid, rfidLocal)
 
@@ -134,7 +133,7 @@ try:
         the first being the current track number and the second being the number of
         tracks in the current playlist. (trackInfo = ['1','13'])
         '''
-        mpc_output = subprocess.check_output([CONTROLLER, 'status'])
+        mpc_output = subprocess.check_output([CONTROLLER, 'status']).decode('utf-8')
         sep = ']'
         output = mpc_output.split(sep, 1)[1]
         output_list = output.split()
@@ -166,7 +165,7 @@ try:
         if rfidLocal == oldRfid:
             oldRfid = rfidLocal
             rfidLocal = ser.read(10)
-            rfidLocal = rfidLocal.strip()
+            rfidLocal = rfidLocal.strip().decode('utf-8')
             return actions(rfid, rfidLocal)
 
         elif rfidLocal == '22222222':
@@ -190,7 +189,7 @@ try:
         elif rfidLocal == '11111111':
             subprocess.call([PLAYER, 'toggle'])
             rfidLocal = ser.read(10)
-            rfidLocal = rfidLocal.strip()
+            rfidLocal = rfidLocal.strip().decode('utf-8')
             oldRfid = rfidLocal
             return actions(rfid, rfidLocal)
 
