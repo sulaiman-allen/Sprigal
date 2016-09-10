@@ -200,7 +200,7 @@ try:
                 subprocess.call([CONTROLLER, '-q', 'volume', str(level)])
                 # (print 'level = {0}'.format(level))
                 if level % 10 == 0:
-                    for crunch in range((level / 10) * 5):
+                    for crunch in range(int((level / 10) * 5)):
                         sys.stdout.write("#")
                     print("\n")
             subprocess.call([CONTROLLER, '-q', 'stop'])
