@@ -5,6 +5,9 @@ over the computer's serial port. Makes use of the pyserial library - http://pyse
 Author: Sulaiman Allen
 '''
 from serial import *
+import json
+import urllib.request
+import requests
 import subprocess
 import csv
 import sys
@@ -80,6 +83,9 @@ try:
         all the albums available <values> and their corresponding rfid tag ids <keys>.
         '''
 
+        # these codes should not be pushed to the database for the last read value.
+        controlCodes = ['22222222', '33333333', '11111111', '00000000']
+
         print('[+] Waiting for tag...\n')
         rfid = ser.read(10)
         # clean up the extra garbage at the end of the serial data, (Newline character, etc)
@@ -95,6 +101,12 @@ try:
             return loadandplay(rfid, catalog[rfid])
 
         except KeyError:
+
+            if rfid is not in controlCodes:
+                payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
+                r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
+                print("r = ", r)
+
             return main()
 
     def loadandplay(rfid, album):
@@ -200,7 +212,7 @@ try:
                 subprocess.call([CONTROLLER, '-q', 'volume', str(level)])
                 # (print 'level = {0}'.format(level))
                 if level % 10 == 0:
-                    for crunch in range(int((level / 10) * 5)):
+                    for crunch in range((level / 10) * 5):
                         sys.stdout.write("#")
                     print("\n")
             subprocess.call([CONTROLLER, '-q', 'stop'])
