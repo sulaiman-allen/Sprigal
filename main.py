@@ -33,7 +33,7 @@ try:
         try:
             ser = Serial('/dev/ttyUSB0', 9600, timeout=1)
         except serialutil.SerialException:
-            print '[+] Serial Port Not Found. Try unplugging USB cable and plugging it back in.'
+            print('[+] Serial Port Not Found. Try unplugging USB cable and plugging it back in.')
             exit()
 
         # Database load
@@ -45,7 +45,7 @@ try:
                 for d in csv.DictReader(f):
                     catalog[d['rfid']] = d['album']
         except NameError:
-            print '[+] Album file not found.'
+            print('[+] Album file not found.')
             exit()
 
         finally:
@@ -62,7 +62,7 @@ try:
         '''
 
         for tagID in catalog:
-            print 'tagId = ' + str(tagID) + '. ' + 'Album = ' + str(catalog[tagID])
+            print('tagId = ' + str(tagID) + '. ' + 'Album = ' + str(catalog[tagID]))
 
         line = ''
         # if the tag doesnt do a complete read the first time around, this needs to be done.
@@ -70,7 +70,7 @@ try:
             line = ser.read(10)
             # clean up the extra garbage at the end of the serial data, (Newline character, etc)
             rfid = line.strip().decode('utf-8')
-        print 'rfid == ' + str(rfid) + '.'
+        print('rfid == ' + str(rfid) + '.')
 
     def main():
         '''
@@ -80,7 +80,7 @@ try:
         all the albums available <values> and their corresponding rfid tag ids <keys>.
         '''
 
-        print '[+] Waiting for tag...\n'
+        print('[+] Waiting for tag...\n')
         rfid = ser.read(10)
         # clean up the extra garbage at the end of the serial data, (Newline character, etc)
         rfid = rfid.strip().decode('utf-8')
@@ -198,11 +198,11 @@ try:
             # fade out
             for level in range(100, 10, -1):
                 subprocess.call([CONTROLLER, '-q', 'volume', str(level)])
-                #print 'level = {0}'.format(level)
-                if level % 10 == 0: 
+                # (print 'level = {0}'.format(level))
+                if level % 10 == 0:
                     for crunch in range((level / 10) * 5):
                         sys.stdout.write("#")
-                    print "\n"
+                    print("\n")
             subprocess.call([CONTROLLER, '-q', 'stop'])
             # remove all entries from the playlist
             subprocess.call([CONTROLLER, '-q', 'clear'])
