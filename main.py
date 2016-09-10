@@ -88,42 +88,35 @@ try:
         controlCodes = ['22222222', '33333333', '11111111', '00000000']
 
         print('[+] Waiting for tag...\n')
-        rfid = ser.read(10)
+        serialObject = ser.read(10)
         # clean up the extra garbage at the end of the serial data, (Newline character, etc)
-        rfid = rfid.strip().decode('utf-8')
+        rfid = serialObject.strip().decode('utf-8')
 
         # if the tag doesnt do a complete read the first time around, this needs to be done.
-        while len(rfid) != 8:
-            rfid = ser.read(10)
-            rfid = rfid.strip().decode('utf-8')
+        # while len(rfid) != 8:
+        #     rfid = ser.read(10)
+        #     rfid = rfid.strip().decode('utf-8')
 
         get = requests.get("http://127.0.0.1:8000/albums/"+rfid+"/")
         response = get.status_code
 
-        print("response = ", response)
+        # if the album was found in the django database
         if response == 200:
             playlist = get.json()['playlist']
             return loadandplay(rfid, playlist)
+
         # if the album lookup wasnt successful, save the tag as the last scanned unknown tag
         else:
+            rfid = getLatestRfid(serialObject)
             payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
             r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
             sleep(.3)
             return main()
-        # playlist = json.loads(data)['playlist']
 
-        # try:
-        #     catalog[rfid]
-        #     return loadandplay(rfid, catalog[rfid])
-
-        # except KeyError:
-
-        #     if rfid is not in controlCodes:
-        #         payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
-        #         r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
-        #         print("r = ", r)
-
-        return main()
+    def getLatestRfid(rfid):
+        while arduino.inWaiting() > 0:
+            rfid = arduino.readline()
+        return rfid.strip().decode('utf-8')
 
     def loadandplay(rfid, playlist):
         '''
