@@ -5,8 +5,9 @@ over the computer's serial port. Makes use of the pyserial library - http://pyse
 Author: Sulaiman Allen
 '''
 from serial import *
-import json
-import urllib.request
+from time import sleep
+# import json
+# import urllib.request
 import requests
 import subprocess
 import csv
@@ -96,20 +97,33 @@ try:
             rfid = ser.read(10)
             rfid = rfid.strip().decode('utf-8')
 
-        try:
-            catalog[rfid]
-            return loadandplay(rfid, catalog[rfid])
+        response = requests.get("http://127.0.0.1:8000/"+rfid)
 
-        except KeyError:
-
-            if rfid is not in controlCodes:
-                payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
-                r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
-                print("r = ", r)
-
+        if response == 200:
+            playlist = response.json()['playlist']
+            return loadandplay(rfid, playlist)
+        # if the album lookup wasnt successful, save the tag as the last scanned unknown tag
+        else:
+            payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
+            r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
+            sleep(.3)
             return main()
+        # playlist = json.loads(data)['playlist']
 
-    def loadandplay(rfid, album):
+        # try:
+        #     catalog[rfid]
+        #     return loadandplay(rfid, catalog[rfid])
+
+        # except KeyError:
+
+        #     if rfid is not in controlCodes:
+        #         payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
+        #         r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
+        #         print("r = ", r)
+
+        return main()
+
+    def loadandplay(rfid, playlist):
         '''
         Helper function for the "play" function. Loads and starts the playback of the playlist
         (album). Despite the name, this function actually plays the selected playlist whereas
@@ -118,7 +132,7 @@ try:
         rfid = string containing the id for the selected album.
         album = string containing the name of the playlist.
         '''
-        subprocess.call([CONTROLLER, '-q', 'load', album])
+        subprocess.call([CONTROLLER, '-q', 'load', playlist])
         subprocess.call([PLAYER, 'play'])
         return play(rfid)
 
