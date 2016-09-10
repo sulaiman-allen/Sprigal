@@ -97,10 +97,12 @@ try:
             rfid = ser.read(10)
             rfid = rfid.strip().decode('utf-8')
 
-        response = requests.get("http://127.0.0.1:8000/"+rfid)
+        get = requests.get("http://127.0.0.1:8000/albums/"+rfid+"/")
+        response = get.status_code
 
+        print("response = ", response)
         if response == 200:
-            playlist = response.json()['playlist']
+            playlist = get.json()['playlist']
             return loadandplay(rfid, playlist)
         # if the album lookup wasnt successful, save the tag as the last scanned unknown tag
         else:
@@ -226,7 +228,7 @@ try:
                 subprocess.call([CONTROLLER, '-q', 'volume', str(level)])
                 # (print 'level = {0}'.format(level))
                 if level % 10 == 0:
-                    for crunch in range((level / 10) * 5):
+                    for crunch in range(int((level / 10) * 5)):
                         sys.stdout.write("#")
                     print("\n")
             subprocess.call([CONTROLLER, '-q', 'stop'])
