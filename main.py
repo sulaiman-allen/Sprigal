@@ -7,6 +7,7 @@ Author: Sulaiman Allen
 from serial import *
 import subprocess
 import csv
+import sys
 
 global oldRfid
 oldRfid = ''
@@ -197,7 +198,11 @@ try:
             # fade out
             for level in range(100, 10, -1):
                 subprocess.call([CONTROLLER, '-q', 'volume', str(level)])
-
+                #print 'level = {0}'.format(level)
+                if level % 10 == 0: 
+                    for crunch in range((level / 10) * 5):
+                        sys.stdout.write("#")
+                    print "\n"
             subprocess.call([CONTROLLER, '-q', 'stop'])
             # remove all entries from the playlist
             subprocess.call([CONTROLLER, '-q', 'clear'])
@@ -210,13 +215,13 @@ try:
             oldRfid = rfidLocal
             return play(rfid)
 
-    except KeyboardInterrupt:
-        exit()
+except KeyboardInterrupt:
+    exit()
 
 if __name__ == '__main__':
     init()
 
-
+# show crunches/(maybe leds) to show proximity to reader the tag is
 # catalogPrint(catalog)
 
 # when the tag is removed, have a welcoming "ready" sound play after the volume is turned back up to indicate its ready to accept another tag. Also have leds increase
