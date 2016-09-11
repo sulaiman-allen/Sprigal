@@ -6,8 +6,6 @@ Author: Sulaiman Allen
 '''
 from serial import *
 from time import sleep
-# import json
-# import urllib.request
 import requests
 import subprocess
 import csv
@@ -76,7 +74,7 @@ try:
             rfid = line.strip().decode('utf-8')
         print('rfid == ' + str(rfid) + '.')
 
-    def main():
+    def main(lastId="11111111"):
         '''
         Main function. Searches the rfid tag's id against an entry in a database file.
 
@@ -93,9 +91,9 @@ try:
         rfid = serialObject.strip().decode('utf-8')
 
         # if the tag doesnt do a complete read the first time around, this needs to be done.
-        # while len(rfid) != 8:
-        #     rfid = ser.read(10)
-        #     rfid = rfid.strip().decode('utf-8')
+        while len(rfid) != 8:
+             rfid = ser.read(10)
+             rfid = rfid.strip().decode('utf-8')
 
         get = requests.get("http://127.0.0.1:8000/albums/"+rfid+"/")
         response = get.status_code
@@ -105,18 +103,28 @@ try:
             playlist = get.json()['playlist']
             return loadandplay(rfid, playlist)
 
+
         # if the album lookup wasnt successful, save the tag as the last scanned unknown tag
         else:
-            rfid = getLatestRfid(serialObject)
-            payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
-            r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
-            sleep(.3)
-            return main()
+            # make sure that the tag id is only sent to django once and prevent an empty serial line from being sent
+            if lastId != rfid and rfid != "00000000":
+                    
+                # the lastId will always default to "11111111" the first time the program is run since no values
+                # are passed in and also after a tag is removed since they return main with no arguments.
+                if lastId == "11111111":
+                    lastId = rfid
+                    return main(lastId)
+    
+                payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
+                r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
+                #sleep(.5)
+                print("[+] Id Posted To Database")
+                lastId = rfid
+            while lastId == ser.read(10).strip().decode('utf-8'):
+                #print("last read = ", ser.read(10).strip().decode('utf-8'))
+                pass
 
-    def getLatestRfid(rfid):
-        while arduino.inWaiting() > 0:
-            rfid = arduino.readline()
-        return rfid.strip().decode('utf-8')
+        return main(lastId)
 
     def loadandplay(rfid, playlist):
         '''
