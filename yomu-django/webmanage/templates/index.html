@@ -1,0 +1,31 @@
+<!-- {% load staticfiles %} -->
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Music Management Portal</title>
+    <link href="static/bower_components/bootstrap/dist/css/bootstrap.min.css"> 
+    <link href="static/css/main.css"> 
+    <!-- <link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">  -->
+    <!-- <link href="{% static 'css/main.css' %}">  -->
+  </head>
+  <body ng-app="musicEdit">
+    <div id="navBar">
+      <a>View All</a>
+      <a>Add New</a>
+    </div>
+    <div ng-view>
+
+    </div>
+    <!-- <script src="{% static 'bower_components/angular/angular.min.js' %}"></script> -->
+    <!-- <script src="{% static 'bower_components/angular-route/angular-route.min.js' %}"></script> -->
+    <!-- <script src="{% static 'javascripts/app.js' %}"></script> -->
+    <!-- <script src="{% static 'javascripts/main.js' %}"></script> -->
+    <script src="static/bower_components/angular/angular.min.js"></script>
+    <script src="static/bower_components/angular-route/angular-route.min.js"></script>
+    <script src="static/javascripts/app.js"></script>
+    <script src="static/javascripts/main.js"></script>
+  </body>
+</html>

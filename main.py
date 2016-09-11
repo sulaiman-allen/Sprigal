@@ -95,7 +95,7 @@ try:
              rfid = ser.read(10)
              rfid = rfid.strip().decode('utf-8')
 
-        get = requests.get("http://127.0.0.1:8000/albums/"+rfid+"/")
+        get = requests.get("http://127.0.0.1:8000/api/albums/"+rfid+"/")
         response = get.status_code
 
         # if the album was found in the django database
@@ -115,8 +115,8 @@ try:
                     lastId = rfid
                     return main(lastId)
     
-                payload = {"id": 1, "url": "http://127.0.0.1:8000/currentRfid/1/", "rfid": rfid}
-                r = requests.patch("http://127.0.0.1:8000/currentRfid/1/", data=payload)
+                payload = {"id": 1, "url": "http://127.0.0.1:8000/api/currentRfid/1/", "rfid": rfid}
+                r = requests.patch("http://127.0.0.1:8000/api/currentRfid/1/", data=payload)
                 #sleep(.5)
                 print("[+] Id Posted To Database")
                 lastId = rfid
