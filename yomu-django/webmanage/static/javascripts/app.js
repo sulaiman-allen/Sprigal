@@ -13,11 +13,11 @@ angular.module('musicEdit', ['ngRoute'])
   .when('/new', {
     controller: 'NewCtrl',
     templateUrl: 'static/partials/newEntry.html'
+  })
+  .when('/edit/:albumId', {
+    controller: 'EditCtrl',
+    templateUrl: 'static/partials/editAlbum.html'
   });
-  // .when('/edit', {
-  //   controller: 'ViewCtrl',
-  //   templateUrl: 'static/partials/editAlbum.html'
-  // });
 })
 .controller('ViewCtrl', function($timeout, $location, $scope, RfidFactory) { 
 
@@ -33,17 +33,7 @@ angular.module('musicEdit', ['ngRoute'])
 	$scope.playlist = null;
 	$scope.rfid = null;
 
-    $scope.editAlbum = function(albumObject) {
-    	// $location.path('/edit');
-    	$scope.showAlbums = !$scope.showAlbums;
-    	console.log("albumObject = ", albumObject);
-    	$scope.artist = albumObject.artist;
-    	console.log("$scope.artist = ",$scope.artist);
-    	$scope.albumName = albumObject.title;
-    	$scope.playlist = albumObject.playlist;
-    	$scope.rfid = albumObject.rfid;
-    	$timeout();
-    };
+
 })
 .controller('NewCtrl', function($scope, RfidFactory) {
 
@@ -67,12 +57,25 @@ angular.module('musicEdit', ['ngRoute'])
 	};
 
 })
-// .controller('EditCtrl', function($scope, RfidFactory) {
+.controller('EditCtrl', function($scope, $timeout, $routeParams, RfidFactory) {
+	console.log("routparams = ",$routeParams.albumId);
 
-// })
+	$scope.getAlbum = RfidFactory.getCurrentAlbum($routeParams.albumId).then(function(dataResponse) {
+		albumObject = dataResponse.data;
+		$scope.artist = albumObject.artist,
+		console.log("$scope.artist = ",$scope.artist),
+		$scope.albumName = albumObject.title,
+		$scope.playlist = albumObject.playlist,
+		$scope.rfid = albumObject.rfid,
+		$timeout();
+	});
+
+	// $scope.showAlbums = !$scope.showAlbums,
+	// console.log("albumObject = ", albumObject),
+})
 .factory('RfidFactory', function($http) {
 
-	HOST = 'http://snoremini:8000';
+	HOST = 'http://yomu.com:8000';
 
 	allAlbums = null;
 	return {
@@ -88,6 +91,13 @@ angular.module('musicEdit', ['ngRoute'])
 	  	return $http({
 	  		method: 'GET',
 	  		url: HOST+"/api/currentRfid/1/"
+	  	});
+	  },
+	  getCurrentAlbum: (albumRfid) => {
+
+	  	return $http({
+	  		method: 'GET',
+	  		url:HOST+"/api/albums/"+albumRfid
 	  	});
 	  },
 	  postNewAlbum:(albumInfo) => {
