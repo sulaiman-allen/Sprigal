@@ -4,9 +4,16 @@
 	Album Name:<br>
 	<input name="album" type="text" ng-model="albumName" class=""><br>
 	Choose Playlist:<br>
-	<div ng-repeat="playlist in playlistList">
+<!-- 	<div ng-repeat="playlist in playlistList">
 		((playlist))
-	</div>
+	</div> -->
+
+	<select class="SelectRfid" ng-model="playlist"> 
+	   <option ng-repeat="entry in playlistList" value=playlist>
+	   ((entry))
+	   </option>
+	</select><br>
+	   <!-- ng-options="car.guid as car.name for car in cars" -->
 
 	<!-- <input><br> -->
 	Associated Tag #:<br>
