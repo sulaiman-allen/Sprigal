@@ -52,6 +52,19 @@ angular.module('musicEdit', ['ngRoute'])
 		$scope.lastRfid = lastScan.data.rfid;
 	});
 
+	$scope.postNewAlbum = function() {
+
+		albumJson =   {
+		    "title": albumName,
+		    "artist": artistName,
+		    "playlist": playList,
+		    "rfid": lastRfid
+		};
+
+		RfidFactory.postNewAlbum(albumJson);
+
+	};
+
 })
 // .controller('EditCtrl', function($scope, RfidFactory) {
 
@@ -78,7 +91,7 @@ angular.module('musicEdit', ['ngRoute'])
 	  },
 	  postNewAlbum:(albumInfo) => {
 	    console.log("albumInfo = ", albumInfo);
-	    return $http.post("http://10.0.0.179:8000/api/albums/", albumInfo)
+	    return $http.post(HOST+"/api/albums/", albumInfo)
 	    .then(
 	      res => console.log("res = ", res.data)
 	    );
