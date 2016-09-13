@@ -53,12 +53,13 @@ angular.module('musicEdit', ['ngRoute'])
 	});
 
 	$scope.postNewAlbum = function() {
-
+                
+		console.log("inside post new album");
 		albumJson =   {
-		    "title": albumName,
-		    "artist": artistName,
-		    "playlist": playList,
-		    "rfid": lastRfid
+		    "title": $scope.albumName,
+		    "artist": $scope.artistName,
+		    "playlist": $scope.playList,
+		    "rfid": $scope.lastRfid
 		};
 
 		RfidFactory.postNewAlbum(albumJson);
@@ -71,7 +72,7 @@ angular.module('musicEdit', ['ngRoute'])
 // })
 .factory('RfidFactory', function($http) {
 
-	HOST = 'http://snorebook:8000';
+	HOST = 'http://snoremini:8000';
 
 	allAlbums = null;
 	return {
