@@ -1,11 +1,4 @@
-
-<!-- ((test)) -->
-<div ng-if="showAlbums">
-	<div ng-repeat="album in allAlbums">
-		<p class="album-entry" ng-click="editAlbum(album)">((album.artist)) - ((album.title))</p>
-	</div>
-</div>
-<div ng-if="!showAlbums">
+<div>
 	Artist Name:<br>
 	<input name="artist" type="text" ng-model="artist" class=""><br>
 	Album Name:<br>
@@ -15,8 +8,7 @@
 	Associated Tag #:<br>
 	<input name="rfid" type="text" class="" ng-model="rfid"><br>
 	<button ng-click="">Submit</button>
-
-	<dir>
-		<a href="#/">Return to main</a>
-	</dir>
 </div>
+<dir>
+	<a href="#">Return to main</a>
+</dir>

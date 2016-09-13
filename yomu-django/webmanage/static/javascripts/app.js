@@ -13,57 +13,76 @@ angular.module('musicEdit', ['ngRoute'])
   .when('/new', {
     controller: 'NewCtrl',
     templateUrl: 'static/partials/newEntry.html'
-  })
-  // .when('/register', {
-  //   controller: 'AuthCtrl',
-  //   controllerAs: 'auth',
-  //   templateUrl: '/auth/register.html'
+  });
+  // .when('/edit', {
+  //   controller: 'ViewCtrl',
+  //   templateUrl: 'static/partials/editAlbum.html'
   // });
 })
-.controller('ViewCtrl', function($timeout, $scope, RfidFactory) { 
-	$scope.test = "it worked"
+.controller('ViewCtrl', function($timeout, $location, $scope, RfidFactory) { 
+
 	$scope.allAlbums =  RfidFactory.getAllAlbums().then(function(dataResponse) {
-		console.log("dataResponse = ", dataResponse)
+		// console.log("dataResponse = ", dataResponse);
         $scope.allAlbums = dataResponse.data;
     });
 
-	
+    console.log("Loading me");
+    $scope.showAlbums = true;
+	$scope.artist = null;
+	$scope.albumName = null;
+	$scope.playlist = null;
+	$scope.rfid = null;
 
+    $scope.editAlbum = function(albumObject) {
+    	// $location.path('/edit');
+    	$scope.showAlbums = !$scope.showAlbums;
+    	console.log("albumObject = ", albumObject);
+    	$scope.artist = albumObject.artist;
+    	console.log("$scope.artist = ",$scope.artist);
+    	$scope.albumName = albumObject.title;
+    	$scope.playlist = albumObject.playlist;
+    	$scope.rfid = albumObject.rfid;
+    	$timeout();
+    };
 })
-.controller('NewCtrl', function($timeout, $scope, RfidFactory) {
-	$scope.worx = "this worx 2"
+.controller('NewCtrl', function($scope, RfidFactory) {
 
 	$scope.lastRfid = RfidFactory.getLastRfid().then(function(lastScan) {
-		console.log("lastScan = ", lastScan)
-		$scope.lastRfid = lastScan.data.rfid
+		// console.log("lastScan = ", lastScan);
+		$scope.lastRfid = lastScan.data.rfid;
 	});
 
 })
+// .controller('EditCtrl', function($scope, RfidFactory) {
+
+// })
 .factory('RfidFactory', function($http) {
 
-	allAlbums = null
+	HOST = 'http://snorebook:8000';
+
+	allAlbums = null;
 	return {
 	  getAllAlbums: () => {
 
 	  	return $http({
 	  	            method: 'GET',
-	  	            url: "http://localhost:8000/api/albums/"
+	  	            url: HOST+"/api/albums/"
 	  	        });
 	  },
 	  getLastRfid: () => {
 
 	  	return $http({
 	  		method: 'GET',
-	  		url: "http://localhost:8000/api/currentRfid/1/"
+	  		url: HOST+"/api/currentRfid/1/"
 	  	});
 	  },
 	  postNewAlbum:(albumInfo) => {
-	    console.log("albumInfo = ", albumInfo)
-	    return $http.post("http://localhost:8000/api/albums/", albumInfo)
+	    console.log("albumInfo = ", albumInfo);
+	    return $http.post("http://10.0.0.179:8000/api/albums/", albumInfo)
 	    .then(
 	      res => console.log("res = ", res.data)
-	    )
+	    );
 	  },
-	}
-})
+	};
+});
 
