@@ -70,6 +70,13 @@ angular.module('musicEdit', ['ngRoute'])
 		$timeout();
 	});
 
+	$scope.playlistList = null;
+
+	$scope.getplaylists = RfidFactory.getAllPlaylists().then(function(playlists){
+		console.log("playlists = ", playlists.data.playlists);
+		$scope.playlistList = playlists.data.playlists;
+		$timeout();
+	});
 	// $scope.showAlbums = !$scope.showAlbums,
 	// console.log("albumObject = ", albumObject),
 })
@@ -91,6 +98,13 @@ angular.module('musicEdit', ['ngRoute'])
 	  	return $http({
 	  		method: 'GET',
 	  		url: HOST+"/api/currentRfid/1/"
+	  	});
+	  },
+	  getAllPlaylists: () => {
+
+	  	return $http({
+	  		method: 'GET',
+	  		url: HOST+"/getPlaylists/"
 	  	});
 	  },
 	  getCurrentAlbum: (albumRfid) => {
