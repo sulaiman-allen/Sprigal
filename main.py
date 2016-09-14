@@ -37,6 +37,8 @@ try:
         except serialutil.SerialException:
             print('[+] Serial Port Not Found. Try unplugging USB cable and plugging it back in.')
             exit()
+        finally:
+            main()
 
         # Database load
         # global catalog
@@ -202,7 +204,7 @@ try:
             if int(trackInfo[0]) != 1:
                 subprocess.call([PLAYER, 'prev'])
             elif int(trackInfo[0]) == 1:
-                subprocess.call([PLAYER, int(trackInfo[1])])
+                subprocess.call([CONTROLLER, "-q", "play", trackInfo[1]])
 
             oldRfid = rfidLocal
             return play(rfid)
@@ -211,8 +213,8 @@ try:
             trackInfo = trackinfo()
             if int(trackInfo[0]) < int(trackInfo[1]):
                 subprocess.call([PLAYER, 'next'])
-            elif int(trackInfo[0] == int(trackInfo[1])):
-                subprocess.call([PLAYER, "1"])
+            elif int(trackInfo[0]) >= int(trackInfo[1]):
+                subprocess.call([CONTROLLER, "-q", "play", "1"])
 
             oldRfid = rfidLocal
             return play(rfid)
