@@ -1,5 +1,5 @@
 
- *  Arduino to SL018/SL030 wiring:
+ /*  Arduino to SL018/SL030 wiring:
  *  A3/TAG     1     5
  *  A4/SDA     2     3
  *  A5/SCL     3     4

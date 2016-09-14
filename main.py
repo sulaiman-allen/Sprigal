@@ -160,12 +160,15 @@ try:
         rfid = string containing the id for the selected album.
         '''
 
-        line = ser.read(10)
-        rfidLocal = line.strip().decode('utf-8')
+        # line = ser.read(10)
+        # rfidLocal = line.strip().decode('utf-8')
+
+        rfidLocal = ser.read(10).strip().decode('utf-8')
 
         while rfid == rfidLocal:
-            line = ser.read(10)
-            rfidLocal = line.strip().decode('utf-8')
+            # line = ser.read(10)
+            # rfidLocal = line.strip().decode('utf-8')
+            rfidLocal = ser.read(10).strip().decode('utf-8')
 
         return actions(rfid, rfidLocal)
 
