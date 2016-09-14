@@ -26,7 +26,7 @@ angular.module('musicEdit', ['ngRoute'])
         $scope.allAlbums = dataResponse.data;
     });
 
-    console.log("Loading me");
+    // console.log("Loading me");
     $scope.showAlbums = true;
 	$scope.artist = null;
 	$scope.albumName = null;
@@ -44,7 +44,7 @@ angular.module('musicEdit', ['ngRoute'])
 
 	$scope.postNewAlbum = function() {
                 
-		console.log("inside post new album");
+		// console.log("inside post new album");
 		albumJson =   {
 		    "title": $scope.albumName,
 		    "artist": $scope.artistName,
@@ -56,39 +56,50 @@ angular.module('musicEdit', ['ngRoute'])
 	};
 	
 	$scope.playlistList = null;
+	$scope.getPlaylistsInUse = RfidFactory.getAllAlbums().then(function(allalbums){
+		// console.log("in use albums = ", allalbums.data);
+
+		$scope.playlistsInUse = [];
+
+		for(i = 0; i < allalbums.data.length; i++) {
+			// console.log("album = ", allalbums.data[i]);
+			$scope.playlistsInUse.push(allalbums.data[i]);
+		}
+	});
+
 
 	$scope.getplaylists = RfidFactory.getAllPlaylists().then(function(playlists){
-		console.log("playlists =", playlists.data.playlists);
+		// console.log("playlists =", playlists.data.playlists);
 		$scope.playlistList = playlists.data.playlists;
 	});
 
+
+
 	$scope.notAlreadyUsed = function(item) {
 	
-		console.log("item = ",item);
-		for (playlist in $scope.playlistList) {
+		// console.log("item = ",item);
+		for (var playlist in $scope.playlistsInUse) {
 			
-			console.log("playlist = ", $scope.playlistList[playlist]);		
-			if (item == $scope.playlistList[playlist]) {
-				return false	
+			// console.log("playlist = ", $scope.playlistsInUse[playlist].playlist);		
+			if (item == $scope.playlistsInUse[playlist].playlist) {
+				return false;
 			}
 		}
 		
 		return true;
-	}	
+	};
 	
 	
 
 })
 .controller('EditCtrl', function($scope, $timeout, $routeParams, RfidFactory) {
-	console.log("routparams = ",$routeParams.albumId);
 
 	$scope.getAlbum = RfidFactory.getCurrentAlbum($routeParams.albumId).then(function(dataResponse) {
 		albumObject = dataResponse.data;
-		$scope.artist = albumObject.artist,
-		console.log("$scope.artist = ",$scope.artist),
-		$scope.albumName = albumObject.title,
-		$scope.playlist = albumObject.playlist,
-		$scope.rfid = albumObject.rfid,
+		$scope.artist = albumObject.artist;
+		$scope.albumName = albumObject.title;
+		$scope.playlist = albumObject.playlist;
+		$scope.rfid = albumObject.rfid;
 		$timeout();
 	});
 
@@ -104,7 +115,7 @@ angular.module('musicEdit', ['ngRoute'])
 })
 .factory('RfidFactory', function($http) {
 
-	//HOST = 'http://yomu.com:8000';
+	// HOST = 'http://yomu.com:8000';
 	HOST = 'http://snoremini:8000';
 
 	allAlbums = null;
