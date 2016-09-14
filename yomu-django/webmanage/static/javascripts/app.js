@@ -115,8 +115,8 @@ angular.module('musicEdit', ['ngRoute'])
 })
 .factory('RfidFactory', function($http) {
 
-	// HOST = 'http://yomu.com:8000';
-	HOST = 'http://snoremini:8000';
+	HOST = 'http://yomu.com:8000';
+	// HOST = 'http://snoremini:8000';
 
 	allAlbums = null;
 	return {

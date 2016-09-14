@@ -11,7 +11,7 @@ import subprocess
 import csv
 import sys
 
-global oldRfid
+# global oldRfid
 oldRfid = ''
 
 # Audio Player
@@ -20,6 +20,9 @@ CONTROLLER = 'mpc'  # mpc has the option of loading a playlist from the command 
 
 # Serial Init
 ser = None
+
+# Network
+LOCALHOST = "http://127.0.0.1:8000"
 
 # Catalog
 # catalog = dict()
@@ -79,25 +82,30 @@ try:
     def main(lastId="11111111"):
         '''
         Main function. Searches the rfid tag's id against an entry in a database file.
-
-        catalog = a dictionary file loaded at start time that contains the information for
-        all the albums available <values> and their corresponding rfid tag ids <keys>.
         '''
+        # catalog = a dictionary file loaded at start time that contains the information for
+        # all the albums available <values> and their corresponding rfid tag ids <keys>.
 
-        # these codes should not be pushed to the database for the last read value.
-        controlCodes = ['22222222', '33333333', '11111111', '00000000']
+        # stop playback (if any) and remove all entries from the playlist
+        subprocess.call([CONTROLLER, '-q', 'stop'])
+        subprocess.call([CONTROLLER, '-q', 'clear'])
 
         print('[+] Waiting for tag...\n')
-        serialObject = ser.read(10)
-        # clean up the extra garbage at the end of the serial data, (Newline character, etc)
-        rfid = serialObject.strip().decode('utf-8')
+
+        # ## rfid = serialObject.strip().decode('utf-8')
+        # ## serialObject = ser.read(10)
+
+        # clean up the extra garbage at the end of the serial data, (Newline character, etc) and convert from byte object
+        # to utf.
+        rfid = ser.read(10).strip().decode('utf-8')
 
         # if the tag doesnt do a complete read the first time around, this needs to be done.
         while len(rfid) != 8:
-            rfid = ser.read(10)
-            rfid = rfid.strip().decode('utf-8')
+            # ## rfid = ser.read(10)
+            # ## rfid = rfid.strip().decode('utf-8')
+            rfid = ser.read(10).strip().decode('utf-8')
 
-        get = requests.get("http://127.0.0.1:8000/api/albums/"+rfid+"/")
+        get = requests.get(LOCALHOST+"/api/albums/"+rfid+"/")
         response = get.status_code
 
         # if the album was found in the django database
@@ -107,8 +115,12 @@ try:
 
         # if the album lookup wasnt successful, save the tag as the last scanned unknown tag
         else:
+            # these codes should not be pushed to the database for the last read value.
+            controlCodes = ['22222222', '33333333', '11111111', '00000000']
+
             # make sure that the tag id is only sent to django once and prevent an empty serial line from being sent
-            if lastId != rfid and rfid != "00000000":
+            if lastId != rfid and rfid not in controlCodes and len(rfid) == 8:
+                # ## if lastId != rfid and rfid != "00000000" and len(rfid) == 8:
 
                 # the lastId will always default to "11111111" the first time the program is run since no values
                 # are passed in and also after a tag is removed since they return main with no arguments.
@@ -116,13 +128,14 @@ try:
                     lastId = rfid
                     return main(lastId)
 
-                payload = {"id": 1, "url": "http://127.0.0.1:8000/api/currentRfid/1/", "rfid": rfid}
-                r = requests.patch("http://127.0.0.1:8000/api/currentRfid/1/", data=payload)
-                # sleep(.5)
+                payload = {"id": 1, "url": LOCALHOST+"/api/currentRfid/1/", "rfid": rfid}
+                r = requests.patch(LOCALHOST+"/api/currentRfid/1/", data=payload)
+
                 print("[+] Id Posted To Database")
                 lastId = rfid
+
+            # this loop is used to clear the serial read buffer
             while lastId == ser.read(10).strip().decode('utf-8'):
-                # print("last read = ", ser.read(10).strip().decode('utf-8'))
                 pass
 
         return main(lastId)
@@ -259,6 +272,3 @@ if __name__ == '__main__':
 
 # when the tag is removed, have a welcoming "ready" sound play after the volume is turned back up to indicate its ready
 # to accept another tag. Also have leds increasebrightness for a quick burst
-
-# if the track is the first track, allow the back button to start the track over or
-# have the track loop back to the last track
