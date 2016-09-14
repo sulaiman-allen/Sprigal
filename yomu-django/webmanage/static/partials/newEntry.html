@@ -5,7 +5,6 @@
 	<input name="album" type="text" ng-model="albumName" class=""><br>
 	Choose Playlist:<br>
 
-	<p>just to be clear, playlist == ((playlist))</p>	
 	<select class="SelectRfid" ng-model="playlist">
 		<option ng-repeat="entry in playlistList | filter:notAlreadyUsed" ng-model="playlist">
 		((entry))
