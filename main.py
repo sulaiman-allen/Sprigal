@@ -22,7 +22,7 @@ CONTROLLER = 'mpc'  # mpc has the option of loading a playlist from the command 
 ser = None
 
 # Catalog
-catalog = dict()
+# catalog = dict()
 
 try:
     def init():
@@ -39,40 +39,40 @@ try:
             exit()
 
         # Database load
-        global catalog
+        # global catalog
 
-        try:
-            with open('albums.csv', 'r') as f:
-                # copy the database file to a dictionary
-                for d in csv.DictReader(f):
-                    catalog[d['rfid']] = d['album']
-        except NameError:
-            print('[+] Album file not found.')
-            exit()
+        # try:
+        #     with open('albums.csv', 'r') as f:
+        #         # copy the database file to a dictionary
+        #         for d in csv.DictReader(f):
+        #             catalog[d['rfid']] = d['album']
+        # except NameError:
+        #     print('[+] Album file not found.')
+        #     exit()
 
-        finally:
-            # close the database file
-            f.close()
-            main()
+        # finally:
+        #     # close the database file
+        #     f.close()
+        #     main()
 
-    def catalogPrint(catalog):
-        '''
-        Test function that prints out the contents of the album database.
+    # def catalogPrint(catalog):
+    #     '''
+    #     Test function that prints out the contents of the album database.
 
-        catalog = a dictionary file loaded at start time that contains the information for
-        all the albums available <values> and their corresponding rfid tag ids <keys>.
-        '''
+    #     catalog = a dictionary file loaded at start time that contains the information for
+    #     all the albums available <values> and their corresponding rfid tag ids <keys>.
+    #     '''
 
-        for tagID in catalog:
-            print('tagId = ' + str(tagID) + '. ' + 'Album = ' + str(catalog[tagID]))
+    #     for tagID in catalog:
+    #         print('tagId = ' + str(tagID) + '. ' + 'Album = ' + str(catalog[tagID]))
 
-        line = ''
-        # if the tag doesnt do a complete read the first time around, this needs to be done.
-        while len(line) != 10:
-            line = ser.read(10)
-            # clean up the extra garbage at the end of the serial data, (Newline character, etc)
-            rfid = line.strip().decode('utf-8')
-        print('rfid == ' + str(rfid) + '.')
+    #     line = ''
+    #     # if the tag doesnt do a complete read the first time around, this needs to be done.
+    #     while len(line) != 10:
+    #         line = ser.read(10)
+    #         # clean up the extra garbage at the end of the serial data, (Newline character, etc)
+    #         rfid = line.strip().decode('utf-8')
+    #     print('rfid == ' + str(rfid) + '.')
 
     def main(lastId="11111111"):
         '''
@@ -92,8 +92,8 @@ try:
 
         # if the tag doesnt do a complete read the first time around, this needs to be done.
         while len(rfid) != 8:
-             rfid = ser.read(10)
-             rfid = rfid.strip().decode('utf-8')
+            rfid = ser.read(10)
+            rfid = rfid.strip().decode('utf-8')
 
         get = requests.get("http://127.0.0.1:8000/api/albums/"+rfid+"/")
         response = get.status_code
@@ -103,25 +103,24 @@ try:
             playlist = get.json()['playlist']
             return loadandplay(rfid, playlist)
 
-
         # if the album lookup wasnt successful, save the tag as the last scanned unknown tag
         else:
             # make sure that the tag id is only sent to django once and prevent an empty serial line from being sent
             if lastId != rfid and rfid != "00000000":
-                    
+
                 # the lastId will always default to "11111111" the first time the program is run since no values
                 # are passed in and also after a tag is removed since they return main with no arguments.
                 if lastId == "11111111":
                     lastId = rfid
                     return main(lastId)
-    
+
                 payload = {"id": 1, "url": "http://127.0.0.1:8000/api/currentRfid/1/", "rfid": rfid}
                 r = requests.patch("http://127.0.0.1:8000/api/currentRfid/1/", data=payload)
-                #sleep(.5)
+                # sleep(.5)
                 print("[+] Id Posted To Database")
                 lastId = rfid
             while lastId == ser.read(10).strip().decode('utf-8'):
-                #print("last read = ", ser.read(10).strip().decode('utf-8'))
+                # print("last read = ", ser.read(10).strip().decode('utf-8'))
                 pass
 
         return main(lastId)
@@ -202,19 +201,21 @@ try:
             trackInfo = trackinfo()
             if int(trackInfo[0]) != 1:
                 subprocess.call([PLAYER, 'prev'])
-                oldRfid = rfidLocal
-                return play(rfid)
-            else:
-                return play(rfid)
+            elif int(trackInfo[0]) == 1:
+                subprocess.call([PLAYER, int(trackInfo[1])])
+
+            oldRfid = rfidLocal
+            return play(rfid)
 
         elif rfidLocal == '33333333':
             trackInfo = trackinfo()
             if int(trackInfo[0]) < int(trackInfo[1]):
                 subprocess.call([PLAYER, 'next'])
-                oldRfid = rfidLocal
-                return play(rfid)
-            else:
-                return play(rfid)
+            elif int(trackInfo[0] == int(trackInfo[1])):
+                subprocess.call([PLAYER, "1"])
+
+            oldRfid = rfidLocal
+            return play(rfid)
 
         elif rfidLocal == '11111111':
             subprocess.call([PLAYER, 'toggle'])
@@ -250,11 +251,12 @@ except KeyboardInterrupt:
 if __name__ == '__main__':
     init()
 
-# show crunches/(maybe leds) to show proximity to reader the tag is
 # catalogPrint(catalog)
 
-# when the tag is removed, have a welcoming "ready" sound play after the volume is turned back up to indicate its ready to accept another tag. Also have leds increase
-# brightness for a quick burst
+# show crunches/(maybe leds) to show proximity to reader the tag is
+
+# when the tag is removed, have a welcoming "ready" sound play after the volume is turned back up to indicate its ready
+# to accept another tag. Also have leds increasebrightness for a quick burst
 
 # if the track is the first track, allow the back button to start the track over or
 # have the track loop back to the last track
