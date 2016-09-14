@@ -4,12 +4,10 @@
 	Album Name:<br>
 	<input name="album" type="text" ng-model="albumName" class=""><br>
 	Choose Playlist:<br>
-<!-- 	<div ng-repeat="playlist in playlistList">
-		((playlist))
-	</div> -->
 
+	<p>Just to be clear, playlist = ((playlist))</p>
 	<select class="SelectRfid" ng-model="playlist"> 
-	   <option ng-repeat="entry in playlistList" value=playlist>
+	   <option ng-repeat="entry in playlistList | filter:notAlreadyUsed" ng-model="playlist">
 	   ((entry))
 	   </option>
 	</select><br>

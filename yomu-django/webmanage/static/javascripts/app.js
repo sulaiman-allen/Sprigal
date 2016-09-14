@@ -55,12 +55,28 @@ angular.module('musicEdit', ['ngRoute'])
 		RfidFactory.postNewAlbum(albumJson);
 	};
 	
-	$scope.playListList = null;
+	$scope.playlistList = null;
 
 	$scope.getplaylists = RfidFactory.getAllPlaylists().then(function(playlists){
 		console.log("playlists =", playlists.data.playlists);
 		$scope.playlistList = playlists.data.playlists;
 	});
+
+	$scope.notAlreadyUsed = function(item) {
+	
+		console.log("item = ",item);
+		for (playlist in $scope.playlistList) {
+			
+			console.log("playlist = ", $scope.playlistList[playlist]);		
+			if (item == $scope.playlistList[playlist]) {
+				return false	
+			}
+		}
+		
+		return true;
+	}	
+	
+	
 
 })
 .controller('EditCtrl', function($scope, $timeout, $routeParams, RfidFactory) {
