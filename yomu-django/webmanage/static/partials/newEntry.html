@@ -4,7 +4,13 @@
 	Album Name:<br>
 	<input name="album" type="text" ng-model="albumName" class=""><br>
 	Choose Playlist:<br>
-	<input name="playlist" type="text" ng-model="playList" class=""><br>
+	
+	<select class="SelectRfid" ng-model="playlist">
+		<option ng-repeat="entry in playlistList" value="playlist">
+		((entry))
+		</option>
+	</select><br>
+
 	Associated Tag #:<br> 
 	<input name="rfid" type="text" class="" ng-model="lastRfid"><br>
 	<button ng-click="postNewAlbum()">Submit</button>
