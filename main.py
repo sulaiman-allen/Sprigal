@@ -92,17 +92,12 @@ try:
 
         print('[+] Waiting for tag...\n')
 
-        # ## rfid = serialObject.strip().decode('utf-8')
-        # ## serialObject = ser.read(10)
-
         # clean up the extra garbage at the end of the serial data, (Newline character, etc) and convert from byte object
         # to utf.
         rfid = ser.read(10).strip().decode('utf-8')
 
         # if the tag doesnt do a complete read the first time around, this needs to be done.
         while len(rfid) != 8:
-            # ## rfid = ser.read(10)
-            # ## rfid = rfid.strip().decode('utf-8')
             rfid = ser.read(10).strip().decode('utf-8')
 
         get = requests.get(LOCALHOST+"/api/albums/"+rfid+"/")
@@ -111,7 +106,8 @@ try:
         # if the album was found in the django database
         if response == 200:
             playlist = get.json()['playlist']
-            return loadandplay(rfid, playlist)
+            # return loadandplay(rfid, playlist)
+            loadandplay(rfid, playlist)
 
         # if the album lookup wasnt successful, save the tag as the last scanned unknown tag
         else:
@@ -126,7 +122,8 @@ try:
                 # are passed in and also after a tag is removed since they return main with no arguments.
                 if lastId == "11111111":
                     lastId = rfid
-                    return main(lastId)
+                    # return main(lastId)
+                    main(lastId)
 
                 payload = {"id": 1, "url": LOCALHOST+"/api/currentRfid/1/", "rfid": rfid}
                 r = requests.patch(LOCALHOST+"/api/currentRfid/1/", data=payload)
@@ -138,7 +135,8 @@ try:
             while lastId == ser.read(10).strip().decode('utf-8'):
                 pass
 
-        return main(lastId)
+        # return main(lastId)
+        main(lastId)
 
     def loadandplay(rfid, playlist):
         '''
@@ -151,7 +149,8 @@ try:
         '''
         subprocess.call([CONTROLLER, '-q', 'load', playlist])
         subprocess.call([PLAYER, 'play'])
-        return play(rfid)
+        # return play(rfid)
+        play(rfid)
 
     def play(rfid):
         '''
@@ -160,17 +159,13 @@ try:
         rfid = string containing the id for the selected album.
         '''
 
-        # line = ser.read(10)
-        # rfidLocal = line.strip().decode('utf-8')
-
         rfidLocal = ser.read(10).strip().decode('utf-8')
 
         while rfid == rfidLocal:
-            # line = ser.read(10)
-            # rfidLocal = line.strip().decode('utf-8')
             rfidLocal = ser.read(10).strip().decode('utf-8')
 
-        return actions(rfid, rfidLocal)
+        # return actions(rfid, rfidLocal)
+        actions(rfid, rfidLocal)
 
     def trackinfo():
         '''
@@ -207,13 +202,12 @@ try:
         # a series of presses depending on the duration of the time the button was pressed
         # down but I only want to register one of them.
 
-        # subprocess.call([PLAYER])
-
         if rfidLocal == oldRfid:
             oldRfid = rfidLocal
             rfidLocal = ser.read(10)
             rfidLocal = rfidLocal.strip().decode('utf-8')
-            return actions(rfid, rfidLocal)
+            # return actions(rfid, rfidLocal)
+            actions(rfid, rfidLocal)
 
         elif rfidLocal == '22222222':
             trackInfo = trackinfo()
@@ -223,7 +217,8 @@ try:
                 subprocess.call([CONTROLLER, "-q", "play", trackInfo[1]])
 
             oldRfid = rfidLocal
-            return play(rfid)
+            # return play(rfid)
+            play(rfid)            
 
         elif rfidLocal == '33333333':
             trackInfo = trackinfo()
@@ -233,14 +228,16 @@ try:
                 subprocess.call([CONTROLLER, "-q", "play", "1"])
 
             oldRfid = rfidLocal
-            return play(rfid)
+            # return play(rfid)
+            play(rfid)
 
         elif rfidLocal == '11111111':
             subprocess.call([PLAYER, 'toggle'])
             rfidLocal = ser.read(10)
             rfidLocal = rfidLocal.strip().decode('utf-8')
             oldRfid = rfidLocal
-            return actions(rfid, rfidLocal)
+            # return actions(rfid, rfidLocal)
+            actions(rfid, rfidLocal)
 
         elif rfidLocal == '00000000' or rfidLocal == '':
             # fade out
@@ -256,20 +253,20 @@ try:
             subprocess.call([CONTROLLER, '-q', 'clear'])
             subprocess.call([CONTROLLER, '-q', 'volume', '100'])
             oldRfid = rfidLocal
-            return main()
+            # return main()
+            main()
 
         # if its not a control code, hopefully it will be a database code
         else:
             oldRfid = rfidLocal
-            return play(rfid)
+            # return play(rfid)
+            play(rfid)
 
 except KeyboardInterrupt:
     exit()
 
 if __name__ == '__main__':
     init()
-
-# catalogPrint(catalog)
 
 # show crunches/(maybe leds) to show proximity to reader the tag is
 
