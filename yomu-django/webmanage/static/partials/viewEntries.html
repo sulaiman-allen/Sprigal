@@ -1,9 +1,9 @@
 
 <!-- ((test)) -->
-<div ng-if="showAlbums">
-	<div ng-repeat="album in allAlbums">
+<div ng-if="showAlbums" class="viewEntries">
+	<div ng-repeat="album in allAlbums " class="listedAlbum">
 		<!-- <p class="album-entry" ng-click="editAlbum(album)">((album.artist)) - ((album.title))</p> -->
-		<a class="album-entry" href="/#/edit/((album.rfid))">((album.artist)) - ((album.title))</a>
+		<a class="album-entry" href="/#/edit/((album.rfid))">(($index)) - ((album.artist)) - ((album.title))</a>
 	</div>
 </div>
 <div ng-if="!showAlbums">

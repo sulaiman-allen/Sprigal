@@ -29,9 +29,41 @@
 	margin-left: 809px;
 }
 
-/******************new entry*********************/
+/******************entry*********************/
 
-.newEntry {
+.Entry {
 	margin-top: 60px;
 	margin-left: 60px;
+}
+
+.artistInput {
+	margin-bottom: 20px
+}
+
+.albumInput {
+	margin-bottom: 20px;
+}
+
+.playlistInput {
+	margin-bottom: 20px;
+}
+
+.rfidInput {
+	margin-bottom: 20px;
+}
+
+.submitButton {
+	margin-top: 20px;
+}
+
+/******************viewentries*******************/
+
+.viewEntries {
+	margin-top: 50px;
+	margin-left: 20%;
+}
+
+.listedAlbum {
+	margin: 15px 0px;
+	font-size: 30px;
 }

@@ -1,17 +1,16 @@
-<div class="newEntry">
+<div class="Entry">
 	Artist Name:<br>
-	<input name="artist" type="text" ng-model="artistName" class=""><br>
+	<input name="artist" type="text" ng-model="artistName" class="artistInput"><br>
 	Album Name:<br>
-	<input name="album" type="text" ng-model="albumName" class=""><br>
-	Choose Playlist:<br>
+	<input name="album" type="text" ng-model="albumName" class="albumInput"><br>
 
-	<select class="SelectRfid" ng-model="playlist">
+	Choose Playlist:<br>
+	<select ng-model="playlist" class="playlistInput">
 		<option ng-repeat="entry in playlistList | filter:notAlreadyUsed" ng-model="playlist">
-		((entry))
 		</option>
 	</select><br>
 
 	Associated Tag #:<br> 
-	<input name="rfid" type="text" class="" ng-model="lastRfid"><br>
-	<button ng-click="postNewAlbum()">Submit</button>
+	<input name="rfid" type="text" class="rfidInput" ng-model="lastRfid"><br>
+	<button ng-click="postNewAlbum()" class="submitButton">Submit</button>
 </div>
