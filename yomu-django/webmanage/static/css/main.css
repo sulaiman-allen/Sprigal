@@ -1,0 +1,69 @@
+.album-entry {
+	margin: 10px 0px;
+}
+
+.navBar {
+	background-color: #8d8d8d;
+	height: 172px;
+	padding-top: 80px;
+}
+
+#logo {
+	float: right;
+	margin-left: 0px;
+	margin-top: -80px;
+}
+.controls {
+	/*width: 80%;*/
+	margin-left: 51%;
+	float: left;
+}
+
+.controls a {
+	font-size: 30px;
+	padding-right: 35px;
+	color: #0d0d0d;
+}
+
+.navBar img {
+	margin-left: 809px;
+}
+
+/******************entry*********************/
+
+.Entry {
+	margin-top: 60px;
+	margin-left: 60px;
+}
+
+.artistInput {
+	margin-bottom: 20px
+}
+
+.albumInput {
+	margin-bottom: 20px;
+}
+
+.playlistInput {
+	margin-bottom: 20px;
+}
+
+.rfidInput {
+	margin-bottom: 20px;
+}
+
+.submitButton {
+	margin-top: 20px;
+}
+
+/******************viewentries*******************/
+
+.viewEntries {
+	margin-top: 50px;
+	margin-left: 20%;
+}
+
+.listedAlbum {
+	margin: 15px 0px;
+	font-size: 30px;
+}

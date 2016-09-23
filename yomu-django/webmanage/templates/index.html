@@ -1,0 +1,28 @@
+<!-- {% load staticfiles %} -->
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Music Management Portal</title>
+    <link href="static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"> 
+    <link href="static/css/main.css" rel="stylesheet" type="text/css"> 
+  </head>
+  <body ng-app="musicEdit">
+    <div class="navBar">
+      <img src="static/imgs/Logo1.jpg" id="logo" alt="">
+      <div class="controls">
+        <a href="#/">View All</a>
+        <a href="#/new/">Add New</a>  
+      </div>
+    </div>
+    <div ng-view>
+
+    </div>
+    <script src="static/bower_components/angular/angular.min.js"></script>
+    <script src="static/bower_components/angular-route/angular-route.min.js"></script>
+    <script src="static/javascripts/app.js"></script>
+    <script src="static/javascripts/main.js"></script>
+  </body>
+</html>

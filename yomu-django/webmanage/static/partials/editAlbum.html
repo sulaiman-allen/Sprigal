@@ -1,0 +1,18 @@
+<div class="Entry">
+	Artist Name:<br>
+	<input name="artist" type="text" ng-model="artist" class="artistInput"><br>
+	Album Name:<br>
+	<input name="album" type="text" ng-model="albumName" class="albumInput"><br>
+	Choose Playlist:<br>
+	<select ng-model="playlist" class="playlistInput"> 
+	   <option ng-repeat="entry in playlistList | filter:notAlreadyUsed" ng-model="playlist" class="SelectRfid">
+	   ((entry))
+	   </option>
+	</select><br>
+	Associated Tag #:<br>
+	<input name="rfid" type="text" class="" ng-model="rfid" class="rfidInput"><br>
+	<button ng-click="" class="submitButton">Submit</button>
+</div>
+<dir>
+	<a href="#/">Return to main</a>
+</dir>
